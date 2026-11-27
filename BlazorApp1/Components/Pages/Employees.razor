@@ -1,0 +1,145 @@
+﻿@page "/employees"
+@rendermode InteractiveServer
+@using BlazorApp1.Models
+
+<PageTitle>Employee Management</PageTitle>
+
+<div class="container p-4">
+
+    <h2>Employee Management</h2>
+    <p>Manage your company employees</p>
+
+    <button class="btn btn-primary mb-3"
+            type="button"
+            @onclick="ShowForm">
+        + Add Employee
+    </button>
+
+    @if (showForm)
+    {
+        <div class="card shadow p-4 mb-4">
+
+            <h4>Add New Employee</h4>
+
+            <EditForm Model="@newEmployee"
+                      OnValidSubmit="@AddEmployee">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label>Employee Name</label>
+                    <InputText class="form-control"
+                               @bind-Value="newEmployee.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Email</label>
+                    <InputText class="form-control"
+                               @bind-Value="newEmployee.Email" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Phone</label>
+                    <InputText class="form-control"
+                               @bind-Value="newEmployee.Phone" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Department</label>
+                    <InputText class="form-control"
+                               @bind-Value="newEmployee.Department" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Designation</label>
+                    <InputText class="form-control"
+                               @bind-Value="newEmployee.Designation" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Salary</label>
+                    <InputNumber class="form-control"
+                                 @bind-Value="newEmployee.Salary" />
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Save Employee
+                </button>
+
+                <button type="button"
+                        class="btn btn-secondary ms-2"
+                        @onclick="CancelForm">
+                    Cancel
+                </button>
+
+            </EditForm>
+        </div>
+    }
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var emp in employees)
+            {
+                <tr>
+                    <td>@emp.Id</td>
+                    <td>@emp.Name</td>
+                    <td>@emp.Email</td>
+                    <td>@emp.Department</td>
+                    <td>@emp.Designation</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm"
+                                @onclick="() => DeleteEmployee(emp)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+@code {
+    private bool showForm = false;
+
+    private List<Employee> employees = new();
+
+    private Employee newEmployee = new();
+
+    private void ShowForm()
+    {
+        showForm = true;
+    }
+
+    private void CancelForm()
+    {
+        showForm = false;
+        newEmployee = new Employee();
+    }
+
+    private void AddEmployee()
+    {
+        newEmployee.Id = employees.Count + 1;
+        employees.Add(newEmployee);
+
+        newEmployee = new Employee();
+        showForm = false;
+    }
+
+    private void DeleteEmployee(Employee emp)
+    {
+        employees.Remove(emp);
+    }
+}
